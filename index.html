@@ -7,7 +7,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.20.0/firebase-app.js";
         import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.20.0/firebase-database.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.20.0/firebase-auth.js";
 
         // Configuration Firebase
         const firebaseConfig = {
@@ -23,16 +22,6 @@
         // Initialisation Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
-        const auth = getAuth(app);
-
-        // Vérification de l'état de connexion de l'administrateur
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loadAllUsersData(); // Chargement des données des utilisateurs si l'administrateur est connecté
-            } else {
-                window.location.href = '/login.html'; // Redirection vers la page de connexion
-            }
-        });
 
         // Chargement des données des utilisateurs depuis Firebase
         function loadAllUsersData() {
@@ -84,7 +73,9 @@
             const userRef = ref(database, `users/${userId}`);
 
             update(userRef, { [field]: newValue }).then(() => {
-                alert(`${field === 'totalTeam' ? 'Total de l\'équipe' : 'Total de recharge'} mis à jour avec succès.`);
+                // Affichage d'un message de confirmation
+                const message = `${field === 'totalTeam' ? 'Total de l\'équipe' : 'Total de recharge'} mis à jour avec succès.`;
+                alert(message);
             }).catch((error) => {
                 console.error('Erreur lors de la mise à jour des données :', error);
             });
@@ -109,6 +100,9 @@
                 }
             });
         };
+
+        // Charger les données à l'ouverture de la page
+        window.onload = loadAllUsersData;
     </script>
     <style>
         /* Style général */
